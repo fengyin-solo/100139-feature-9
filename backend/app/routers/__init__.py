@@ -20,6 +20,8 @@ from app.routers import pump as router_pump
 from app.routers import power as router_power
 from app.routers import pipe as router_pipe
 from app.routers import lift as router_lift
+from app.routers import lift_level as router_lift_level
+from app.routers import network as router_network
 from app.routers import meter as router_meter
 from app.routers import dispatch2 as router_dispatch2
 from app.routers import storm as router_storm
@@ -27,4 +29,4 @@ from app.routers import pollutant as router_pollutant
 from app.routers import material as router_material
 from app.routers import license as router_license
 
-ROUTERS = [router_plank, router_inflow, router_aeration, router_chemical, router_sediment, router_sludge, router_effluent, router_labtest, router_reagent, router_equip, router_pump, router_power, router_pipe, router_lift, router_meter, router_dispatch2, router_storm, router_pollutant, router_material, router_license]
+ROUTERS = [router_plank, router_inflow, router_aeration, router_chemical, router_sediment, router_sludge, router_effluent, router_labtest, router_reagent, router_equip, router_pump, router_power, router_pipe, router_lift, router_lift_level, router_network, router_meter, router_dispatch2, router_storm, router_pollutant, router_material, router_license]

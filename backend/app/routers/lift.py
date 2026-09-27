@@ -1,4 +1,4 @@
-"""提升泵站接口：维护提升泵站，覆盖启动清渣、排水处置、停机等动作。"""
+"""提升泵站接口：维护提升泵站台账，覆盖登记、编辑保存与启动清渣、排水处置、停机等动作。"""
 from __future__ import annotations
 
 from typing import Any
@@ -23,11 +23,18 @@ def list_entries(
     page: int = 1,
     size: int = 20,
 ) -> PageResult[dict]:
-    """按泵站编号与状态过滤提升泵站列表；没有数据时返回空页，不报错。"""
+    """按泵站编号与泵站状态过滤提升泵站列表；没有数据时返回空页，不报错。"""
     if size > 200:
         raise HTTPException(status_code=400, detail="每页最多 200 条，请缩小分页范围")
     items, total = service.list_entries(keyword=keyword, status=status, page=page, size=size)
     return PageResult(items=items, total=total, page=page, size=size)
+
+
+@router.get("/export")
+def export_entries() -> dict[str, Any]:
+    """导出提升泵站清单：返回当前过滤条件下的全量数据。"""
+    items, total = service.list_entries(page=1, size=10000)
+    return {"module": "lift", "total": total, "items": items}
 
 
 @router.get("/{entry_id}", response_model=dict)
@@ -44,8 +51,20 @@ def create_entry(payload: EntryPayload) -> ActionResult:
     """登记一条提升泵站，缺字段时说明原因而不是静默丢弃。"""
     entry, missing = service.create_entry(payload.values)
     if missing:
-        return ActionResult(ok=False, message=f"缺少必填字段：{'、'.join(missing)}")
+        return ActionResult(ok=False, message=f"缺少必填字段或校验未通过：{'、'.join(missing)}")
     return ActionResult(ok=True, message="提升泵站已登记", entry=entry)
+
+
+@router.put("/{entry_id}", response_model=ActionResult)
+def update_entry(entry_id: int, payload: EntryPayload) -> ActionResult:
+    """保存提升泵站编辑结果（液位高度、格栅状态等直接挂在泵站编号上）。
+
+    每次保存都是更新同一条台账并落盘，重新打开读到的仍是改过的内容。
+    """
+    entry, message = service.update_entry(entry_id, payload.values)
+    if entry is None:
+        return ActionResult(ok=False, message=message)
+    return ActionResult(ok=True, message=message, entry=entry)
 
 
 @router.post("/{entry_id}/actions", response_model=ActionResult)
@@ -56,10 +75,3 @@ def run_action(entry_id: int, payload: EntryPayload) -> ActionResult:
     if entry is None:
         return ActionResult(ok=False, message=message)
     return ActionResult(ok=True, message=message, entry=entry)
-
-
-@router.get("/export")
-def export_entries() -> dict[str, Any]:
-    """导出提升泵站清单：返回当前过滤条件下的全量数据。"""
-    items, total = service.list_entries(page=1, size=10000)
-    return {"module": "lift", "total": total, "items": items}

@@ -15,6 +15,8 @@ const Pump = () => import('@/views/pump/index.vue')
 const Power = () => import('@/views/power/index.vue')
 const Pipe = () => import('@/views/pipe/index.vue')
 const Lift = () => import('@/views/lift/index.vue')
+const LiftLevel = () => import('@/views/lift_level/index.vue')
+const Network = () => import('@/views/network/index.vue')
 const Meter = () => import('@/views/meter/index.vue')
 const Dispatch2 = () => import('@/views/dispatch2/index.vue')
 const Storm = () => import('@/views/storm/index.vue')
@@ -40,6 +42,8 @@ const router = createRouter({
     { path: '/power', name: 'power', component: Power },
     { path: '/pipe', name: 'pipe', component: Pipe },
     { path: '/lift', name: 'lift', component: Lift },
+    { path: '/lift-level', name: 'lift-level', component: LiftLevel },
+    { path: '/network', name: 'network', component: Network },
     { path: '/meter', name: 'meter', component: Meter },
     { path: '/dispatch2', name: 'dispatch2', component: Dispatch2 },
     { path: '/storm', name: 'storm', component: Storm },
